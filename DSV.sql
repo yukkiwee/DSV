@@ -23,9 +23,10 @@ customer_street varchar(30),
 customer_city varchar(30),
 customer_zipcode int,
 customer_country varchar(30),
-primary key (address_id)); 
+customer_id int,
+foreign key  (customer_id) references Customers(customer_id));
 
-create table Customers_Addresses(
+-- create table Customers_Addresses(
 customer_address_id int,
 customer_id int,
 address_id int,
