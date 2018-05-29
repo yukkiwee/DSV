@@ -1213,11 +1213,11 @@ values
 select * 
 from Services;
 -- insert into 
-
-select year(Payments.payment_date), Payments.payment_amount as LossCancelled 
-from Payments, Bookings, Sales_Staff as LossCancelledTable
+create view LossCancelled as
+select year(p.payment_date), p.payment_amount -- , b.outcome_code, b.status_code, s.discount_rate 
+from Payments p, Bookings b, Sales_Staff s
 where outcome_code in (0) -- put where outcomecode=paid)
-and status_code = (11) -- put where outcomecode=cancelled)
+and status_code in (11) -- put where outcomecode=cancelled)
 and discount_rate is null
 -- papapa
 order by year (payment_date) asc;
@@ -1225,26 +1225,35 @@ order by year (payment_date) asc;
 select*
 from LossCancelled;
 
-select distinct Loss,
-sum ((100-discountrate)/100)*(payment_amount) 
-from Loss 
-as LossDiscount
-where outcome_code in (1) -- put where outcomecode=paid)
-and status_code in (11)-- put where outcomecode=Approved)
+create view LossDiscount as 
+select year(p.payment_date), (((100-s.discount_rate)/100)*(p.payment_amount)) -- , b.outcome_code, b.status_code, s.discount_rate
+from Payments p, Bookings b, Sales_Staff s
+where outcome_code in (0) -- put where outcomecode=paid)
+and status_code in (10) -- put where outcomecode=cancelled)
 and discount_rate is not null
-order by year (payment_date) asc;
+order by year(payment_date) asc;
 
-select distinct Profit,
-sum (payment_amount) 
-from Profit
+select * from LossDiscount;
+
+create view Loss as 
+select sum(LC.payment_amount)
+from LossDiscount LC;
+
+select * from Loss;
+
+create view Profit as
+select sum(payment_amount) 
+from Payments, Bookings
 as Income
 where outcome_code in (1)-- put where outcomecode=paid)
 and status_code in (11)-- put where outcomecode=Approved)
 order by year (payment_date) asc;
 
-create table Projections
+select * from Profit;
+
+create view Projections as
 select (Income-(LossDiscount + LossCancelled)) as Revenue ,  year (payment_date)
-from Income , Loss;
+from Profit , Loss;
 
 
 
