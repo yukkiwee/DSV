@@ -1,0 +1,669 @@
+drop database if exists dsv;
+create database dsv;
+use dsv;
+
+create table Travel_Agencies(
+travel_agency_id int(20) primary key,
+travel_agency_details text  
+);
+
+create table Customers(
+customer_id int(20) primary key,
+first_name varchar(30),  -- improvement
+last_name varchar(30)  -- improvement
+);
+
+create table Customers_Addresses(
+customer_address_id int(20) primary key,
+customer_houseno int,
+customer_street varchar(30),
+customer_city varchar(30),
+customer_zipcode int,
+customer_country varchar(30),
+customer_id int,
+foreign key (customer_id) references Customers(customer_id));
+
+
+create table Customers_Contacts( 
+contact_id int(20) primary key,
+customer_id int(20),
+customer_contactnumber varchar(30),
+customer_contactnumber2 varchar(30),
+customer_officenumber varchar(30),
+foreign key (customer_id) references Customers(customer_id)
+);
+
+create table Ref_Booking_Outcomes (
+outcome_code int(20) primary key,
+outcome_description text);
+
+create table Ref_Booking_Status (
+status_code int(20) primary key,
+status_description text);
+
+create table Bookings(
+booking_id int(20) primary key,
+customer_id int(20),
+outcome_code int(20),
+status_code int(50),
+travel_agency_id int(20),
+date_of_booking date,
+booking_details text,
+foreign key (customer_id) references Customers(customer_id),
+foreign key (outcome_code) references Ref_Booking_Outcomes(outcome_code),
+foreign key (status_code) references Ref_Booking_Status(status_code),
+foreign key (travel_agency_id) references Travel_Agencies(travel_agency_id)
+);
+
+create table Services( --
+service_id int(20) unique primary key,
+service_details text
+);
+
+create table Service_Bookings(
+booking_id int(20),
+service_id int(20),
+booking_start_date date,
+booking_end_date date,
+other_details text,
+foreign key (booking_id) references Bookings(booking_id),
+foreign key (service_id) references Services(service_id)
+);
+
+create table Airlines(
+airline_id int(20),
+airline_details text,
+constraint airline_id foreign key (airline_id) references Services(service_id)
+);
+
+create table Cars(
+car_id int(20),
+car_details text,
+constraint car_id foreign key (car_id) references Services(service_id)
+);
+
+create table Hotels(
+hotel_id int(20),
+hotel_details text,
+constraint hotel_id foreign key (hotel_id) references Services(service_id)
+);
+
+create table Restaurants(
+restaurant_id int(20),
+restaurant_details text,
+constraint restaurant_id foreign key (restaurant_id) references Services(service_id)
+);
+
+
+create table Payments(
+payment_id int(20) primary key,
+booking_id int(20),
+payment_amount int(50),
+payment_date date,
+other_details text,
+
+foreign key (booking_id) references Bookings(booking_id)
+);
+
+create table Staff_Information(
+staff_id int(20) primary key,
+staff_first_name varchar(30),
+staff_last_name varchar(30),
+staff_contact_number int(30),
+staff_position varchar(30),
+staff_address_details varchar(30),
+staff_salary int(30));
+
+create table Sales_Period(
+sales_period_id int primary key,
+sales_period_start_date date,
+sales_period_end_date date); 
+
+create table Sales_Staff(
+discount_rate int(20),
+customer_id int(20),
+staff_id int(20),
+payment_id int(20),
+booking_id int(20),
+sales_period_id int(20),
+
+foreign key (customer_id) references Customers (customer_id),
+foreign key (staff_id) references Staff_Information (staff_id),
+foreign key (payment_id) references Payments (payment_id),
+foreign key (booking_id) references Bookings (booking_id),
+foreign key (sales_period_id) references Sales_Period (sales_period_id));
+
+insert into Travel_Agencies 
+values
+(1000, 'travelAgency1'),
+(1001, 'travelAgency2'),
+(1002, 'travelAgency3'),
+(1003, 'travelAgency4'),
+(1004, 'travelAgency5'),
+(1005, 'travelAgency6'),
+(1006, 'travelAgency7'),
+(1007, 'travelAgency8'),
+(1008, 'travelAgency9'),
+(1009, 'travelAgency10'),
+(1010, 'travelAgency11'),
+(1011, 'travelAgency12'),
+(1012, 'travelAgency13'),
+(1013, 'travelAgency14'),
+(1014, 'travelAgency15'),
+(1015, 'travelAgency16'),
+(1016, 'travelAgency17'),
+(1017, 'travelAgency18'),
+(1018, 'travelAgency19'),
+(1019, 'travelAgency20');
+
+
+
+
+
+
+insert into Customers 
+values
+(2000, 'John','Paul'),
+(2001, 'Lee', 'Tan Ming'),
+(2002, 'Kee', 'En Ming'),
+(2003, 'Ali', 'Baba'),
+(2004, 'Jacob', 'Wong'),
+(2005, 'Nicole', 'Leong'),
+(2006, 'Zara', 'Basyirah'),
+(2007, 'Wee', 'Ling Yin'),
+(2008, 'Natalie', 'Leong'),
+(2009, 'Chai', 'Ervin'),
+(2010, 'Sia', 'Ming Yang'),
+(2011, 'Chew', 'Jia Jer'),
+(2012, 'Malia', 'Lee'),
+(2013, 'Sasha', 'Obama'),
+(2014, 'Malia', 'Obama'),
+(2015, 'Barack', 'Obama'),
+(2016, 'Denzel', 'Washington'),
+(2017, 'George', 'Washington'),
+(2018, 'Barbara', 'Bush'),
+(2019, 'George', 'Bush'),
+(2020, 'Baba', 'Bubu'),
+(2021, 'Abu', 'Ali');
+
+
+
+insert into Customers_Addresses 
+values
+(3000, 1, 'street1', 'Kuala Lumpur', 43000, 'Malaysia', 2000),
+(3001, 2, 'street2', 'Georgetown ', 43001, 'Malaysia', 2001),
+(3002, 3, 'street3', 'Kuala Lumpur', 43002, 'Malaysia', 2002),
+(3003, 4, 'street4', 'Sydney', 43032, 'Australia', 2003),
+(3004, 5, 'street5', 'Shinjuku', 57000, 'Japan', 2004),
+(3005, 1, 'street6', 'Harajuku', 67000, 'Japan', 2005),
+(3006, 2, 'street7', 'Melbourne', 57100, 'Australia', 2006),
+(3007, 3, 'street8', 'Perth', 43021, 'Australia', 2007),
+(3008, 19, 'street9', 'New York', 56000, 'USA', 2008),
+(3009, 12, 'street10', 'Las Vegas', 67100, 'USA', 2009),
+(3010, 13, 'street11', 'Los Angeles', 32000, 'USA', 2010),
+(3011, 14, 'street12', 'Johor Bahru', 67000, 'Malaysia', 2011),
+(3012, 15, 'street13', 'Barcelona', 46200, 'Spain', 2012),
+(3013, 20, 'street14', 'Madrid', 56700, 'Spain', 2013),
+(3014, 21, 'street15', 'Stockholm', 23400, 'Sweden', 2014),
+(3015, 25, 'street16', 'Shibuya', 45600, 'Japan', 2015),
+(3016, 26, 'street17', 'Seoul', 67800, 'Korea', 2016),
+(3017, 30, 'street18', 'Busan', 33400, 'Korea', 2017),
+(3018, 31, 'street19', 'Paris', 44500, 'France', 2018),
+(3019, 41, 'street20', 'London', 22200, 'UK', 2019),
+(3020, 12, 'street21', 'London', 22201, 'UK', 2020),
+(3021, 11, 'street22', 'What', 55020, 'Malaysia', 2021);
+
+insert into Customers_Contacts
+values
+(4000, 2000, '012-231231', null, '03-3023425'),
+(4001, 2001, '016-432423', '016-43275648', '03-4612893'),
+(4002, 2002, '013-231412', null, '03-4259783'),
+(4003, 2003, '011-432435', null, '03-4623783'),
+(4004, 2004, '010-432422', null, '03-6147238'),
+(4005, 2005, '017-432434', '016-745323', '03-1452978'),
+(4006, 2006, '012-752133', null, '03-5123431'),
+(4007, 2007, '019-643624', null, '03-5231603'),
+(4008, 2008, '017-675795', null, '03-4132523'),
+(4009, 2009, '012-523515', null, '03-5263198'),
+(4010, 2010, '014-427392', null, '03-4139782'),
+(4011, 2011, '015-403627', '016-745376', '03-5441982'),
+(4012, 2012, '016-648921', null, '03-8953423'),
+(4013, 2013, '017-526891', null, '03-8932641'),
+(4014, 2014, '014-562983', null, '03-3023425'),
+(4015, 2015, '013-641928', '016-756865', '03-7849233'),
+(4016, 2016, '014-537192', null, '03-6423832'),
+(4017, 2017, '016-469132', null, '03-4252563'),
+(4018, 2018, '016-523653', '016-466467', '03-5323332'),
+(4019, 2019, '014-412613', null, '03-4231352');
+
+insert into Ref_Booking_Outcomes
+values
+(0, 'Cancelled'),
+(1, 'Approved');
+
+insert into Ref_Booking_Status
+values
+(10, 'Unpaid'),
+(11, 'Paid');
+
+insert into Bookings
+values
+(12000, 2000, 0, 10, 1000, '2015-01-02', 'details1'),
+(12001, 2001, 1, 11, null, '2015-02-03', 'details2'),
+(12002, 2002, 0, 10, 1002, '2015-04-05', 'details3'),
+(12003, 2003, 1, 11, null, '2015-05-06', 'details4'),
+(12004, 2004, 0, 10, 1003, '2015-12-31', 'details5'),
+(12005, 2005, 1, 11, null, '2015-12-31', 'details6'),
+(12006, 2006, 0, 11, null, '2016-01-02', 'details7'),
+(12007, 2007, 1, 10, 1007, '2016-02-03', 'details8'),
+(12008, 2008, 1, 11, null, '2016-03-05', 'details9'),
+(12009, 2009, 1, 10, 1002, '2016-04-30', 'details10'),
+(12010, 2010, 0, 11, null, '2016-05-29', 'details11'),
+(12011, 2011, 1, 10, 1011, '2016-06-28', 'details12'),
+(12012, 2012, 1, 11, null, '2017-01-02', 'details13'),
+(12013, 2013, 0, 11, null, '2017-02-03', 'details14'),
+(12014, 2014, 1, 10, 1011, '2017-03-05', 'details15'),
+(12015, 2015, 1, 11, null, '2017-05-01', 'details16'),
+(12016, 2016, 0, 11, null, '2017-05-02', 'details17'),
+(12017, 2017, 1, 10, 1017, '2017-06-28', 'details18'),
+(12018, 2018, 1, 11, null, '2017-08-31', 'details19'),
+(12019, 2019, 1, 10, null, '2017-12-31', 'details20'),
+(12020, 2020, 0, 11, null, '2015-02-02', 'details21'),
+(12021, 2021, 1, 11, null, '2015-03-31', 'details22'),
+(12022, 2013, 1, 11, null, '2015-08-27', 'details23'),
+(12023, 2014, 0, 11, null, '2016-03-20', 'details24'),
+(12024, 2002, 1, 11, null, '2016-08-19', 'details25'),
+(12025, 2003, 0, 11, null, '2016-09-01', 'details26'),
+(12026, 2004, 1, 11, null, '2017-01-11', 'details27'),
+(12027, 2012, 1, 11, null, '2017-03-02', 'details28'),
+(12028, 2015, 0, 11, null, '2017-04-20', 'details29');
+
+
+
+insert into Services
+values
+(6000, 'airlines'),
+(6003, 'airlines'),
+(6004, 'airlines'),
+(6005, 'airlines'),
+(6006, 'airlines'),
+(6007, 'airlines'),
+(6008, 'airlines'),
+(6009, 'airlines'),
+(6010, 'airlines'),
+(6011, 'airlines'),
+(6012, 'airlines'),
+(6013, 'airlines'),
+(6014, 'airlines'),
+(6015, 'airlines'),
+(6016, 'airlines'),
+(6017, 'airlines'),
+(6018, 'airlines'),
+(6019, 'airlines'),
+(7000, 'cars'),
+(7001, 'cars'),
+(7002, 'cars'),
+(7003, 'cars'),
+(7004, 'cars'),
+(7005, 'cars'),
+(7006, 'cars'),
+(7007, 'cars'),
+(7008, 'cars'),
+(7009, 'cars'),
+(7010, 'cars'),
+(7011, 'cars'),
+(7012, 'cars'),
+(7013, 'cars'),
+(7014, 'cars'),
+(7015, 'cars'),
+(7016, 'cars'),
+(7017, 'cars'),
+(7018, 'cars'),
+(7019, 'cars'),
+(8000, 'hotels'),
+(8001, 'hotels'),
+(8002, 'hotels'),
+(8003, 'hotels'),
+(8004, 'hotels'),
+(8005, 'hotels'),
+(8006, 'hotels'),
+(8007, 'hotels'),
+(8008, 'hotels'),
+(8009, 'hotels'),
+(8010, 'hotels'),
+(8011, 'hotels'),
+(8012, 'hotels'),
+(8013, 'hotels'),
+(8014, 'hotels'),
+(8015, 'hotels'),
+(8016, 'hotels'),
+(8017, 'hotels'),
+(8018, 'hotels'),
+(8019, 'hotels'),
+(9000, 'restaurant'),
+(9001, 'restaurant'),
+(9002, 'restaurant'),
+(9003, 'restaurant'),
+(9004, 'restaurant'),
+(9005, 'restaurant'),
+(9006, 'restaurant'),
+(9007, 'restaurant'),
+(9008, 'restaurant'),
+(9009, 'restaurant'),
+(9010, 'restaurant'),
+(9011, 'restaurant'),
+(9012, 'restaurant'),
+(9013, 'restaurant'),
+(9014, 'restaurant'),
+(9015, 'restaurant'),
+(9016, 'restaurant'),
+(9017, 'restaurant'),
+(9018, 'restaurant'),
+(9019, 'restaurant');
+
+
+insert into Service_Bookings
+values
+(12000, 6000, '2015-01-02', '2015-01-04', 'details 1'),
+(12000, 7008, '2015-01-02', '2015-01-03', 'details 2'),
+(12000, 8003, '2015-01-02', '2015-01-04', 'details 5'),
+(12001, 6003, '2015-02-03', '2015-02-06', 'details 2'),
+(12001, 7000, '2015-02-03', '2015-02-06', 'details 5'),
+(12001, 8006, '2015-02-03', '2015-02-06', 'details 2'),
+(12002, 6010, '2015-04-05', '2015-04-09', 'details 3'),
+(12002, 8006, '2015-04-05', '2015-04-09', 'details 10'),
+(12002, 9000, '2015-04-05', '2015-04-09', 'details 7'),
+(12003, 6015, '2015-05-06', '2015-05-10', 'details 4'),
+(12003, 7012, '2015-05-06', '2015-05-10', 'details 11'),
+(12004, 6013, '2015-12-31', '2016-01-02', 'details 5'),
+(12004, 7001, '2015-12-31', '2016-01-02', 'details 10'),
+(12004, 8014, '2015-12-31', '2016-01-02', 'details 13'),
+(12004, 9019, '2015-12-31', '2016-01-02', 'details 20'),
+(12005, 6017, '2015-12-31', '2016-01-05', 'details 6'),
+(12005, 8006, '2015-12-31', '2016-01-05', 'details 15'),
+(12005, 9019, '2015-12-31', '2016-01-05', 'details 17'),
+(12006, 6019, '2016-01-02', '2016-01-04', 'details 7'),
+(12006, 7012, '2016-01-02', '2016-01-04', 'details 4'),
+(12007, 7000, '2016-02-03', '2016-02-08', 'details 8'), 
+(12007, 6000, '2016-02-03', '2016-02-08', 'details 10'), 
+(12007, 8014, '2016-02-03', '2016-02-08', 'details 1'), 
+(12007, 9019, '2016-02-03', '2016-02-08', 'details 3'), 
+(12008, 7001, '2016-03-05', '2016-03-10', 'details 9'),
+(12008, 6003, '2016-03-05', '2016-03-10', 'details 13'),
+(12009, 6000, '2016-04-30', '2016-05-1', 'details 10'),
+(12009, 7008, '2016-04-30', '2016-05-1', 'details 2'),
+(12009, 8014, '2016-04-30', '2016-05-1', 'details 4'),
+(12009, 9000, '2016-04-30', '2016-05-1', 'details 19'),
+(12010, 6015, '2016-05-29', '2016-05-31', 'details 11'),
+(12010, 8014, '2016-05-29', '2016-05-31', 'details 13'),
+(12010, 9002, '2016-05-29', '2016-05-31', 'details 1'),
+(12011, 7012, '2016-06-28', '2016-06-30', 'details 19'),
+(12012, 8003, '2017-01-02', '2017-01-04', 'details 13'),
+(12012, 6000, '2017-01-02', '2017-01-04', 'details 3'),
+(12012, 7012, '2017-01-02', '2017-01-04', 'details 7'),
+(12012, 6015, '2017-01-02', '2017-01-04', 'details 13'),
+(12013, 8006, '2017-02-03', '2017-02-06', 'details 14'),
+(12013, 9019, '2017-02-03', '2017-02-06', 'details 2'),
+(12014, 8014, '2017-03-05', '2017-03-07', 'details 15'),
+(12015, 6017, '2017-05-01', '2017-05-04', 'details 16'),
+(12015, 8006, '2017-05-01', '2017-05-04', 'details 2'),
+(12015, 9000, '2017-05-01', '2017-05-04', 'details 11'),
+(12016, 9000, '2017-05-02', '2017-05-05', 'details 17'),
+(12017, 9002, '2017-06-28', '2017-06-30', 'details 18'),
+(12017, 6010, '2017-06-28', '2017-06-30', 'details 1'),
+(12018, 7000, '2017-08-31', '2017-08-31', 'details 19'),
+(12018, 9017, '2017-08-31', '2017-08-31', 'details 14'),
+(12019, 9019, '2017-12-31', '2017-12-31', 'details 20');
+
+insert into Airlines
+values
+(6000, 'airlines1'),
+(6003, 'airlines4'),
+(6010, 'airlines11'),
+(6013, 'airlines14'),
+(6015, 'airlines16'),
+(6017, 'airlines18'),
+(6019, 'airlines20');
+
+insert into Cars
+values
+(7000, 'car1'),
+(7001, 'car2'),
+(7008, 'car9'),
+(7012, 'car13');
+
+insert into Hotels
+values
+(8003, 'hotel4'),
+(8006, 'hotel7'),
+(8014, 'hotel15');
+
+insert into Restaurants
+values 
+(9000, 'restaurant1'),
+(9002, 'restaurant3');
+
+insert into Payments
+values
+(10000, 12001, 1111, '2015-02-03', 'otherdetails1'),
+(10001, 12003, 1111, '2015-05-06', 'otherdetails2'),
+(10002, 12005, 1111, '2015-12-31', 'otherdetails3'),
+(10003, 12006, 2323, '2016-01-02', 'otherdetails4'),
+(10004, 12008, 2323, '2016-03-05', 'otherdetails5'),
+(10005, 12010, 2323, '2016-05-29', 'otherdetails6'),
+(10006, 12012, 2344, '2017-01-02', 'otherdetails7'),
+(10007, 12013, 4556, '2017-02-03', 'otherdetails8'),
+(10008, 12015, 4569, '2017-05-01', 'otherdetails9'),
+(10009, 12016, 6645, '2017-05-02', 'otherdetails10'),
+(10010, 12018, 6789, '2017-08-31', 'otherdetails11'),
+(10011, 12020, 8666, '2015-02-02', 'otherdetails12'),
+(10012, 12021, 8900, '2015-03-31', 'otherdetails13'),
+(10013, 12022, 9064, '2015-08-27', 'otherdetails14'),
+(10014, 12023, 12312, '2016-03-20', 'otherdetails15'),
+(10015, 12024, 12302, '2016-08-19', 'otherdetails16'),
+(10016, 12025, 12311, '2016-09-01', 'otherdetails17'),
+(10017, 12026, 12312, '2017-01-11', 'otherdetails18'),
+(10018, 12027, 12312, '2017-03-02', 'otherdetails19'),
+(10019, 12028, 12333, '2017-04-20', 'otherdetails20');
+
+
+insert into Staff_Information
+values
+(11000, 'Chang An', 'Lee', 011111111, 'staff_position1', 'staff_address_details1', 1000),
+(11001, 'Gabriel', 'Wong', 011111112, 'staff_position2', 'staff_address_details2', 2000),
+(11002, 'Justin', 'Foley', 011111113, 'staff_position3', 'staff_address_details3', 3000),
+(11003, 'Hannah', 'Baker', 011111114, 'staff_position4', 'staff_address_details4', 1000),
+(11004, 'Clay', 'Jensen',  011111115, 'staff_position1', 'staff_address_details5', 2500),
+(11005, 'Jessica', 'Davies', 011111116, 'staff_position4', 'staff_address_details6', 5000),
+(11006, 'Sam', 'Smith', 011111117, 'staff_position3', 'staff_address_details7', 3000),
+(11007, 'Jamie', 'Addams', 011111118, 'staff_position2', 'staff_address_details8', 4000),
+(11008, 'Garrett', 'Buttler', 011111119, 'staff_position1', 'staff_address_details9', 2000),
+(11009, 'Simmie', 'Lim', 011111120, 'staff_position5', 'staff_address_details10', 4000),
+(11010, 'Sammie', 'Lim', 011111121, 'staff_position5', 'staff_address_details10', 4000),
+(11011, 'Dennis', 'Leong', 011111122, 'staff_position2', 'staff_address_details11', 4000),
+(11012, 'Zara', 'Basyirah', 011111123, 'staff_position1', 'staff_address_details12', 1000),
+(11013, 'Minnie', 'Mouse', 011111124, 'staff_position2', 'staff_address_details13', 4000),
+(11014, 'Mickey', 'Mouse', 011111125, 'staff_position1', 'staff_address_details14', 3000),
+(11015, 'Goofy', 'Dog', 011111126, 'staff_position3', 'staff_address_details15', 900),
+(11016, 'Donald', 'Duck', 011111127, 'staff_position2', 'staff_address_details16', 1000),
+(11017, 'Jeffrey', 'Cheah', 011111128, 'staff_position1', 'staff_address_details17', 800),
+(11018, 'Tony', 'Fernandes', 011111129, 'staff_position4', 'staff_address_details18', 4000),
+(11019, 'Falken', 'Cheah', 011111130, 'staff_position1', 'staff_address_details19', 4000);
+;
+
+insert into Sales_Period
+values
+(13000, '2015-01-01', '2015-02-11'),
+(13001, '2015-02-01', '2015-03-11'),
+(13002, '2015-03-01', '2015-04-11'),
+(13003, '2015-04-01', '2015-05-11'),
+(13004, '2015-05-01', '2015-06-11'),
+(13005, '2015-06-01', '2015-07-11'),
+(13006, '2016-01-01', '2016-02-11'),
+(13007, '2016-02-01', '2016-03-11'),
+(13008, '2016-02-01', '2016-04-11'),
+(13009, '2016-02-01', '2016-05-11'),
+(13010, '2016-02-01', '2016-06-11'),
+(13011, '2016-02-01', '2016-07-11'),
+(13012, '2017-01-01', '2016-02-11'),
+(13013, '2017-02-01', '2015-03-11'),
+(13014, '2017-03-01', '2015-04-11'),
+(13015, '2017-04-01', '2015-05-11'),
+(13016, '2017-05-01', '2015-06-11'),
+(13017, '2017-06-01', '2015-07-11'),
+(13018, '2017-07-01', '2015-08-11'),
+(13019, '2017-08-01', '2015-09-11'),
+(13020, '2017-09-01', '2015-10-11');
+
+insert into Sales_Staff
+values
+(10, 2001, 11000, 10000, 12001, 13000),
+(null, 2003, 11005, 10001, 12003, null),
+(10, 2005, 11011, 10002, 12005, 13005),
+(20, 2006, 11018, 10003, 12006, 13010),
+(30, 2008, 11001, 10004, 12008, 13018),
+(10, 2010, 11002, 10005, 12010, 13001),
+(null, 2012, 11005, 10006, 12012, null),
+(10, 2013, 11000, 10007, 12013, 13010),
+(null, 2015, 11011, 10008, 12015, null),
+(20, 2016, 11018, 10009, 12016, 13000),
+(10, 2018, 11003, 10010, 12018, 13008),
+(null, 2020, 11005, 10011, 12020, null),
+(10, 2021, 11001, 10012, 12021, 13018),
+(20, 2013, 11002, 10013, 12022, 13002),
+(30, 2004, 11005, 10014, 12023, 13001),
+(10, 2002, 11000, 10015, 12024, 13005),
+(null, 2003, 11001, 10016, 12025, null),
+(null, 2004, 11011, 10017, 12026, null),
+(10, 2012, 11018, 10018, 12027, 13002),
+(10, 2015, 11000, 10019, 12028, 13010);
+
+select * 
+from Bookings;
+
+create table LossCancelled (
+booking_id int(20),
+payment_date date,
+payment_amount int(20),
+outcome_code int(20),
+status_code int(20));
+
+/*foreign key (outcome_code) references Bookings(outcome_code),
+foreign key (status_code) references Bookings(status_code),
+foreign key (booking_id) references Bookings(booking_id));*/
+
+create table LossDiscount (
+booking_id int(20),
+payment_date date,
+payment_amount int(20),
+outcome_code int(20),
+status_code int(20),
+discount_rate int(20));
+
+/*foreign key (outcome_code) references Bookings(outcome_code),
+foreign key (status_code) references Bookings(status_code),
+foreign key (booking_id) references Bookings(booking_id));*/
+
+create table Loss (
+payment_date int(20),
+totalLoss int(20));
+
+select*from Payments;
+select* from Bookings;
+select*from Sales_Staff;
+
+insert into LossCancelled
+select distinct b.booking_id, p.payment_date, p.payment_amount, b.outcome_code, b.status_code
+from Payments p, Bookings b, Sales_Staff s
+where b.outcome_code in (0) 
+and b.status_code in (11) 
+and s.discount_rate is null
+and (b.booking_id = p.booking_id)
+
+order by year(payment_date) asc;
+
+
+
+insert into LossDiscount 
+select b.booking_id, p.payment_date, (p.payment_amount*(100/(100-s.discount_rate)))-p.payment_amount, b.outcome_code, b.status_code, s.discount_rate
+from Payments p, Bookings b, Sales_Staff s
+where b.outcome_code in (1)
+and b.status_code in (11)
+and s.discount_rate is not null
+and (b.booking_id = p.booking_id)
+and (s.payment_id = p.payment_id)
+order by year(payment_date) asc;
+
+select* from LossDiscount;
+
+insert into Loss
+select year(payment_date), sum(payment_amount) as totalLoss
+from(
+select payment_date, payment_amount
+from LossCancelled
+union all
+select payment_date, payment_amount
+from LossDiscount
+) Loss
+group by year(payment_date);
+
+
+select * from Loss;
+
+create table Income (
+totalIncome int(20),
+payment_date int(20)
+
+
+);
+
+
+insert into Income
+select sum(payment_amount) as totalIncome, year(p.payment_date)
+from Payments p, Bookings b
+where b.outcome_code in (1)
+and b.status_code in (11)
+and (b.booking_id = p.booking_id)
+
+group by year (p.payment_date) asc;
+
+select * from Income;
+
+create table Projections (
+payment_date int(20),
+Revenue int(20)
+
+);
+
+insert into Projections
+select i.payment_date, ((select i.totalIncome)-(select l.totalLoss)) as Revenue
+from Income i, Loss l
+where (i.payment_date = l.payment_date)
+group by payment_date;
+
+
+select*from Projections;
+
+select count(booking_id) as number_of_booking
+from Bookings
+where year(date_of_booking) between 2015 and 2017; -- b.
+
+
+select count(customer_id) as paid_booking_staff 
+from Bookings b
+where travel_agency_id is null
+and status_code in (11)
+and year(date_of_booking) = 2017;
+
+/* d.
+select staff_id, count(booking_id) as staff_sale_count
+from Sales_Staff
+group by staff_id
+having count(booking_id) = ( 
+select max(staff_sale_count) 
+as highest_closed_sale
+from(
+select staff_id, 
+count(booking_id) 
+from Sales_Staff
+group by staff_id)as t);*/
