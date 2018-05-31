@@ -45,7 +45,7 @@ create table Bookings(
 booking_id int(20) primary key,
 customer_id int(20),
 outcome_code int(20),
-status_code int(50),
+status_code int(20),
 travel_agency_id int(20),
 date_of_booking date,
 booking_details text,
